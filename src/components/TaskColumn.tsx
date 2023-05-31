@@ -4,6 +4,7 @@ import { Task, Tasks } from '../shared/types'
 import { generateRandomPastelColor } from '../shared/utils';
 import { useState } from 'react';
 import TaskForm from './TaskForm';
+import TaskCard from './TaskCard';
 
 interface TaskColumnProps {
     statusText: string,
@@ -47,37 +48,7 @@ function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
                         </IconButton>
                     </Box>
                     {columnData?.map(task => (
-                        <Card
-                            key={task.id}
-                            onClick={() => onClickTask(task)}
-                            sx={{
-                                padding: 2,
-                                borderRadius: 3,
-                                marginBottom: 2,
-                                ':hover': {
-                                    cursor: 'pointer',
-                                    background: '#fbfbfb'
-                                },
-                                ':active': {
-                                    background: '#f4f4f4'
-                                }
-                            }}>
-                            <Typography
-                                key={task.id}
-                                pb={1}
-                                fontWeight='bold'
-                                variant='overline'
-                                lineHeight={2}
-                                fontSize={14}>
-                                {task.task}
-                            </Typography>
-                            <Divider />
-                            <Typography
-                                variant='body2'
-                                pt={1}>
-                                {task.description}
-                            </Typography>
-                        </Card>
+                        <TaskCard task={task} onClick={onClickTask} />
                     ))}
                 </Stack>
             </Grid>
