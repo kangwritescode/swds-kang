@@ -3,7 +3,7 @@ import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 import { Task, Tasks } from '../shared/types'
 import { generateRandomPastelColor } from '../shared/utils';
 import { useState } from 'react';
-import TaskForm from './CreateTaskForm';
+import TaskForm from './TaskForm';
 
 interface TaskColumnProps {
     statusText: string,
@@ -18,6 +18,12 @@ function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
 
     const onClickAddTask = () => {
         setFormType('create');
+        setModalIsOpen(true);
+    }
+
+    const onClickTask = (task: Task) => {
+        setFormType('edit');
+        setFormInitialValues(task);
         setModalIsOpen(true);
     }
 
@@ -43,10 +49,18 @@ function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
                     {columnData?.map(task => (
                         <Card
                             key={task.id}
+                            onClick={() => onClickTask(task)}
                             sx={{
                                 padding: 2,
                                 borderRadius: 3,
                                 marginBottom: 2,
+                                ':hover': {
+                                    cursor: 'pointer',
+                                    background: '#fbfbfb'
+                                },
+                                ':active': {
+                                    background: '#f4f4f4'
+                                }
                             }}>
                             <Typography
                                 key={task.id}

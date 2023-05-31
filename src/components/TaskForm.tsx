@@ -16,8 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import CloseIcon from '@mui/icons-material/Close';
 import { type Task } from '../shared/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createTask } from '../api/task';
-
+import { deleteTask, postTask, putTask } from '../api/task';
 
 const schema = z.object({
     task: z.string().nonempty({ message: 'Task is required' }),
@@ -29,28 +28,52 @@ interface TaskFormProps {
     onClose: () => void;
     type: 'create' | 'edit';
     initialValues?: Task;
+
 }
 
-const TaskForm = ({ onClose, initialValues }: TaskFormProps) => {
+const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
 
-    console.log(initialValues);
-
-
-    // Access the client
     const queryClient = useQueryClient()
 
-    const { handleSubmit, register, formState: { errors }, control: formControl } = useForm({ resolver: zodResolver(schema), defaultValues: initialValues });
-    const mutation = useMutation({
-        mutationFn: createTask,
+    const { handleSubmit, register, formState: { errors }, control: formControl } = useForm({
+        resolver: zodResolver(schema),
+        defaultValues: initialValues
+    });
+
+    const createTask = useMutation({
+        mutationFn: postTask,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tasks'] })
         },
     })
 
-    const onSubmit = (data: Task) => {
-        mutation.mutate(data);
+    const updateTask = useMutation({
+        mutationFn: (task: Task) => putTask(task, initialValues?.id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tasks'] })
+        },
+    })
+
+    const removeTask = useMutation({
+        mutationFn: deleteTask,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tasks'] })
+        },
+    })
+
+    const onSubmit = (task: Task) => {
+        if (type === 'edit') {
+            updateTask.mutate(task);
+        } else {
+            createTask.mutate(task);
+        }
         onClose();
     };
+
+    const onDelete = () => {
+        removeTask.mutate(initialValues?.id);
+        onClose();
+    }
 
     const theme = useTheme();
 
@@ -78,7 +101,7 @@ const TaskForm = ({ onClose, initialValues }: TaskFormProps) => {
                 color={theme.palette.text.primary}
                 textAlign='center'
                 mb={2}>
-                Create Task
+                {type === 'create' ? 'Create Task' : 'Edit Task'}
             </Typography>
             <Box component='form' onSubmit={handleSubmit((formValues) => onSubmit(formValues as Task))} sx={{
                 display: 'flex',
@@ -92,6 +115,7 @@ const TaskForm = ({ onClose, initialValues }: TaskFormProps) => {
                     placeholder="Task"
                     variant="outlined"
                     error={!!errors.task}
+                    inputProps={{ maxLength: 10 }}
                 />
                 <TextField
                     {...register('description')}
@@ -100,6 +124,7 @@ const TaskForm = ({ onClose, initialValues }: TaskFormProps) => {
                     multiline
                     rows={4}
                     size="small"
+                    inputProps={{ maxLength: 500 }}
                     error={!!errors.description}
                 />
                 <Controller
@@ -122,13 +147,22 @@ const TaskForm = ({ onClose, initialValues }: TaskFormProps) => {
                                 {errors.status && <span>{errors.root?.message}</span>}
                             </FormControl>
                         )
-                    }} />
+                    }}
+                />
                 <Button
                     type="submit"
                     variant="contained"
                     color="primary"
                     size='large'>
-                    Create Task
+                    {type === 'create' ? 'Create Task' : 'Edit Task'}
+                </Button>
+                <Button
+                    onClick={onDelete}
+                    variant="outlined"
+                    color="error"
+                    size='large'
+                    sx={{ mt: 2 }}>
+                    Delete Task
                 </Button>
             </Box>
         </Box>

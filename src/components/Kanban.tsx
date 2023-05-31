@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getTasks } from '../api/task';
 import { TaskStatus } from '../shared/types';
 import TaskColumn from './TaskColumn';
-import TaskForm from './CreateTaskForm';
+import TaskForm from './TaskForm';
 import { useState } from 'react';
 
 const statuses: TaskStatus[] = ["Pending", "In Progress", "Deleted", "Closed"]
