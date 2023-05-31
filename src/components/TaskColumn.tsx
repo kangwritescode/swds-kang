@@ -1,53 +1,86 @@
-import { Box, Card, Divider, Grid, IconButton, Stack, Typography } from '@mui/material'
+import { Box, Card, Divider, Grid, IconButton, Modal, Stack, Typography } from '@mui/material'
 import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
-import { Tasks } from '../shared/types'
+import { Task, Tasks } from '../shared/types'
 import { generateRandomPastelColor } from '../shared/utils';
+import { useState } from 'react';
+import TaskForm from './CreateTaskForm';
 
 interface TaskColumnProps {
-    status: string,
+    statusText: string,
     statusNum: number,
-    data?: Tasks
+    columnData?: Tasks,
 }
 
-function TaskColumn({ status, statusNum, data }: TaskColumnProps) {
+function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [formType, setFormType] = useState<'create' | 'edit'>('create');
+    const [formInitialValues, setFormInitialValues] = useState<Task | undefined>({status: statusNum});
+
+    const onClickAddTask = () => {
+        setFormType('create');
+        setModalIsOpen(true);
+    }
+
     return (
-        <Grid item xs={3} key={status}>
-            <Stack direction='column' marginRight={3}>
-                <Box pb={1} display='flex' alignItems='center' justifyContent='space-between'>
-                    <Typography fontWeight='bold' color={`${generateRandomPastelColor()}`}>
-                        {status}
-                    </Typography>
-                    <IconButton sx={{ marginRight: -1 }}>
-                        <AddCircleOutlinedIcon />
-                    </IconButton>
-                </Box>
-                {data?.map(task => (
-                    <Card
-                        key={task.id}
-                        sx={{
-                            padding: 2,
-                            borderRadius: 3,
-                            marginBottom: 2,
-                        }}>
+        <>
+            <Grid item xs={3} key={statusText}>
+                <Stack direction='column' marginRight={3}>
+                    <Box
+                        pb={1}
+                        display='flex'
+                        alignItems='center'
+                        justifyContent='space-between'
+                    >
                         <Typography
-                            key={task.id}
-                            pb={1}
                             fontWeight='bold'
-                            variant='overline'
-                            lineHeight={0}
-                            fontSize={14}>
-                            {task.task}
+                            color={generateRandomPastelColor()}>
+                            {statusText}
                         </Typography>
-                        <Divider />
-                        <Typography
-                            variant='body2'
-                            pt={1}>
-                            {task.description}
-                        </Typography>
-                    </Card>
-                ))}
-            </Stack>
-        </Grid>
+                        <IconButton sx={{ marginRight: -1 }} onClick={() => onClickAddTask()}>
+                            <AddCircleOutlinedIcon />
+                        </IconButton>
+                    </Box>
+                    {columnData?.map(task => (
+                        <Card
+                            key={task.id}
+                            sx={{
+                                padding: 2,
+                                borderRadius: 3,
+                                marginBottom: 2,
+                            }}>
+                            <Typography
+                                key={task.id}
+                                pb={1}
+                                fontWeight='bold'
+                                variant='overline'
+                                lineHeight={2}
+                                fontSize={14}>
+                                {task.task}
+                            </Typography>
+                            <Divider />
+                            <Typography
+                                variant='body2'
+                                pt={1}>
+                                {task.description}
+                            </Typography>
+                        </Card>
+                    ))}
+                </Stack>
+            </Grid>
+            <Modal
+                open={modalIsOpen}
+                onClose={() => setModalIsOpen(false)}
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                }}>
+                <TaskForm
+                    type={formType}
+                    initialValues={formInitialValues}
+                    onClose={() => setModalIsOpen(false)}
+                />
+            </Modal>
+        </>
     )
 }
 
