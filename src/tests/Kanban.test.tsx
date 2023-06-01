@@ -1,9 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import {
-    QueryClient,
-    QueryClientProvider,
-} from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Kanban from '../components/Kanban';
 
 // Create a new query client for testing
