@@ -1,4 +1,4 @@
-import { Card, Divider, Stack, Typography } from '@mui/material'
+import { Card, Divider, Typography } from '@mui/material'
 import { Task } from '../shared/types'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -43,7 +43,6 @@ function TaskCard({ task, onClick }: TaskCardProps) {
         updateTask.mutate(updatedTask)
     }
 
-
     return (
         <Card
             key={task.id}
@@ -86,19 +85,19 @@ function TaskCard({ task, onClick }: TaskCardProps) {
                     opacity: 1,
                 },
             }}>
-                {task?.status !== 1 ? (
+                {task?.status !== 1 && (
                     <CardButton onClick={() => onClickMoveCardLeft(task)}>
                         <KeyboardArrowLeftIcon fontSize='large' />
                     </CardButton>
-                ) : null}
+                )}
                 <CardButton onClick={() => onClick(task)}>
                     <EditIcon fontSize='large' />
                 </CardButton>
-                {task?.status !== 4 ? (
+                {task?.status !== 4 && (
                     <CardButton onClick={() => onClickMoveCardRight(task)}>
                         <KeyboardArrowRightIcon fontSize='large' />
                     </CardButton>
-                ) : null}
+                )}
             </Card>
         </Card>
     )

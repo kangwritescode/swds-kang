@@ -67,7 +67,12 @@ function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
                         </Typography>
                         <Stack direction='row'>
                             <Tooltip title='Sort by Date Created'>
-                                <IconButton sx={{ marginRight: -1 }} onClick={() => reverseSortMode()}>
+                                <IconButton
+                                    sx={{
+                                        marginRight: -1,
+                                        transform: sortMode === 'desc' ? 'scaleY(-1)' : ''
+                                    }}
+                                    onClick={() => reverseSortMode()}>
                                     <SortIcon />
                                 </IconButton>
                             </Tooltip>
