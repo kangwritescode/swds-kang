@@ -10,4 +10,3 @@ export interface Task {
 export type Tasks = Task[];
 
 export type TaskStatus = 'Pending' | 'In Progress' | 'Deleted' | 'Closed';
-

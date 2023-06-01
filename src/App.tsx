@@ -1,7 +1,6 @@
-import { QueryClientProvider, QueryClient, } from '@tanstack/react-query'
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import Layout from './components/Layout';
 import Kanban from './components/Kanban';
-
 
 const queryClient = new QueryClient();
 
@@ -12,7 +11,7 @@ function App() {
                 <Kanban />
             </Layout>
         </QueryClientProvider>
-    )
+    );
 }
 
-export default App
+export default App;
