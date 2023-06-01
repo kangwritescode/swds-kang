@@ -39,33 +39,23 @@ function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
         setFormType('create');
         setModalIsOpen(true);
     };
-    const reverseSortMode = () => {
-        if (sortMode === 'asc') {
-            return setSortMode('desc');
-        }
-        setSortMode('asc');
-    };
     const editTask = (task: Task) => {
         setFormType('edit');
         setFormInitialValues(task);
         setModalIsOpen(true);
     };
+    const reverseSortMode = () => {
+        setSortMode((prevSortMode) =>
+            prevSortMode === 'asc' ? 'desc' : 'asc'
+        );
+    };
 
     // Column Data
     const sortedColumnData = useMemo(() => {
-        if (sortMode === 'asc') {
-            return columnData?.sort((a, b) =>
-                compareDates(
-                    new Date(a?.createdAt || ''),
-                    new Date(b?.createdAt || '')
-                )
-            );
-        }
-        return columnData?.sort((a, b) =>
-            compareDates(
-                new Date(b?.createdAt || ''),
-                new Date(a?.createdAt || '')
-            )
+        return columnData?.sort(
+            sortMode === 'asc'
+                ? (a, b) => compareDates(a, b)
+                : (a, b) => compareDates(b, a)
         );
     }, [columnData, sortMode]);
 

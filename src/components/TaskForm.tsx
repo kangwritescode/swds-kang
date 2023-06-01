@@ -26,9 +26,9 @@ const formSchema = z.object({
 });
 
 interface TaskFormProps {
+    initialValues?: Task;
     onClose: () => void;
     type: 'create' | 'edit';
-    initialValues?: Task;
 }
 
 const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
@@ -50,18 +50,21 @@ const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
         mutationFn: postTask,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tasks'] });
+            onClose();
         },
     });
     const updateTask = useMutation({
         mutationFn: (task: Task) => putTask(task, initialValues?.id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tasks'] });
+            onClose();
         },
     });
     const removeTask = useMutation({
         mutationFn: deleteTask,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tasks'] });
+            onClose();
         },
     });
 
@@ -72,11 +75,9 @@ const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
         } else {
             createTask.mutate(task);
         }
-        onClose();
     };
     const onDelete = () => {
         removeTask.mutate(initialValues?.id);
-        onClose();
     };
 
     return (
