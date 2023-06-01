@@ -1,13 +1,9 @@
-# swds-kang
+# SWDS Takehome
 
-### Running Project
+## Running Locally
 
-Execute the following command in the root directory:
+```yarn install && yarn dev```
 
-`yarn install && yarn dev`
+## Running Tests
 
-### Running Tests
-
-Execute the following command in the root directory:
-
-`yarn test`
+```yarn test```
