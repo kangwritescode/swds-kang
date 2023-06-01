@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, Grid, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { getTasks } from '../api/task';
@@ -14,7 +15,7 @@ function Kanban() {
             <Typography pb={2} variant="h4" fontWeight="bold">
                 Kanban
             </Typography>
-            <Grid container>
+            <Grid data-testid="grid-container" container>
                 {statuses.map((status, i) => {
                     const statusNum = i + 1;
                     const columnData = data?.filter(
@@ -22,6 +23,7 @@ function Kanban() {
                     );
                     return (
                         <TaskColumn
+                            data-testid="task-column"
                             key={status}
                             statusText={status}
                             statusNum={statusNum}

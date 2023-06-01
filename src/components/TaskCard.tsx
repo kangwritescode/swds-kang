@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, Divider, Typography } from '@mui/material';
 import { Task } from '../shared/types';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -87,15 +88,21 @@ function TaskCard({ task, onClick }: TaskCardProps) {
                 }}
             >
                 {task?.status !== 1 && (
-                    <CardButton onClick={() => onClickMoveCardLeft(task)}>
+                    <CardButton
+                        testId="left-arrow-button"
+                        onClick={() => onClickMoveCardLeft(task)}
+                    >
                         <KeyboardArrowLeftIcon fontSize="large" />
                     </CardButton>
                 )}
-                <CardButton onClick={() => onClick(task)}>
+                <CardButton testId="edit-button" onClick={() => onClick(task)}>
                     <EditIcon fontSize="large" />
                 </CardButton>
                 {task?.status !== 4 && (
-                    <CardButton onClick={() => onClickMoveCardRight(task)}>
+                    <CardButton
+                        testId="right-arrow-button"
+                        onClick={() => onClickMoveCardRight(task)}
+                    >
                         <KeyboardArrowRightIcon fontSize="large" />
                     </CardButton>
                 )}

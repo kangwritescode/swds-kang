@@ -4,11 +4,13 @@ import React from 'react';
 interface CardButtonProps {
     onClick: () => void;
     children: React.ReactNode;
+    testId?: string;
 }
 
-function CardButton({ onClick, children }: CardButtonProps) {
+function CardButton({ onClick, children, testId }: CardButtonProps) {
     return (
         <Box
+            data-testid={testId}
             onClick={onClick}
             height="100%"
             flexGrow={1}

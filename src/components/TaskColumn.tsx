@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     Box,
     Grid,
@@ -88,6 +88,7 @@ function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
                                 </IconButton>
                             </Tooltip>
                             <IconButton
+                                data-testid="add-task-button"
                                 sx={{ marginRight: -1 }}
                                 onClick={() => onClickAddTask()}
                             >
@@ -96,7 +97,11 @@ function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
                         </Stack>
                     </Box>
                     {sortedColumnData?.map((task) => (
-                        <TaskCard onClick={editTask} task={task} />
+                        <TaskCard
+                            key={task.id}
+                            onClick={editTask}
+                            task={task}
+                        />
                     ))}
                 </Stack>
             </Grid>
@@ -108,11 +113,13 @@ function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
                     alignItems: 'center',
                 }}
             >
-                <TaskForm
-                    type={formType}
-                    initialValues={formInitialValues}
-                    onClose={() => setModalIsOpen(false)}
-                />
+                <>
+                    <TaskForm
+                        type={formType}
+                        initialValues={formInitialValues}
+                        onClose={() => setModalIsOpen(false)}
+                    />
+                </>
             </Modal>
         </>
     );

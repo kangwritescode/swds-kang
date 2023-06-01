@@ -1,3 +1,4 @@
+import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -105,6 +106,7 @@ const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
                 variant="h5"
                 color={theme.palette.text.primary}
                 textAlign="center"
+                data-testid={type === 'create' ? 'create-title' : 'edit-title'}
                 mb={2}
             >
                 {type === 'create' ? 'Create Task' : 'Edit Task'}
@@ -149,6 +151,7 @@ const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
                                 {...field}
                                 labelId="status-label"
                                 label="Status"
+                                data-testid="status-select"
                             >
                                 <MenuItem value={1}>Pending</MenuItem>
                                 <MenuItem value={2}>In Progress</MenuItem>
