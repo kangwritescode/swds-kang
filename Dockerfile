@@ -1,20 +1,12 @@
-# Use the Node.js 16 Alpine base image
-FROM node:16-alpine3.15
+FROM node:18.0.0-alpine3.14
 
-# Set the working directory inside the container
-WORKDIR /var/www/ui
+WORKDIR /app
 
-# Copy package.json and yarn.lock to the working directory
-COPY package.json yarn.lock /var/www/ui/
+COPY package.json ./
+COPY yarn.lock ./
 
-# Install dependencies
 RUN yarn install
 
-# Copy the entire project to the working directory
-COPY . /var/www/ui
+COPY . .
 
-# Build the SPA
-RUN yarn run build
-
-# Specify the command to start the SPA
-CMD yarn start
+CMD yarn dev
