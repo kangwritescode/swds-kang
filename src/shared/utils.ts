@@ -9,6 +9,11 @@ export function generateRandomPastelColor() {
     return color;
 }
 
-// Example usage: Generate a random pastel color
-const randomPastelColor = generateRandomPastelColor();
-console.log(randomPastelColor);
+export const compareDates = (date1: Date, date2: Date) => {
+    if (date1 < date2) {
+        return -1;
+    } else if (date1 > date2) {
+        return 1;
+    }
+    return 0;
+}

@@ -1,10 +1,11 @@
-import { Box, Card, Divider, Grid, IconButton, Modal, Stack, Typography } from '@mui/material'
+import { Box, Grid, IconButton, Modal, Stack, Tooltip, Typography } from '@mui/material'
 import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 import { Task, Tasks } from '../shared/types'
-import { generateRandomPastelColor } from '../shared/utils';
-import { useState } from 'react';
+import { compareDates, generateRandomPastelColor } from '../shared/utils';
+import { useMemo, useState } from 'react';
 import TaskForm from './TaskForm';
 import TaskCard from './TaskCard';
+import SortIcon from '@mui/icons-material/Sort';
 
 interface TaskColumnProps {
     statusText: string,
@@ -13,20 +14,41 @@ interface TaskColumnProps {
 }
 
 function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
+
+    // State
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [formType, setFormType] = useState<'create' | 'edit'>('create');
-    const [formInitialValues, setFormInitialValues] = useState<Task | undefined>({status: statusNum});
+    const [formInitialValues, setFormInitialValues] = useState<Task | undefined>({ status: statusNum });
+    const [sortMode, setSortMode] = useState<'asc' | 'desc'>('asc');
+
+    // Hooks
+    const pastelColor = useMemo(() => generateRandomPastelColor(), [])
 
     const onClickAddTask = () => {
         setFormType('create');
         setModalIsOpen(true);
     }
 
-    const onClickTask = (task: Task) => {
+    const reverseSortMode = () => {
+        if (sortMode === 'asc') {
+            return setSortMode('desc');
+        }
+        setSortMode('asc');
+    }
+
+    const editTask = (task: Task) => {
         setFormType('edit');
         setFormInitialValues(task);
         setModalIsOpen(true);
     }
+
+    const sortedColumnData = useMemo(() => {
+        if (sortMode === 'asc') {
+            return columnData?.sort((a, b) => compareDates(new Date(a?.createdAt || ''), new Date(b?.createdAt || '')));
+        }
+        return columnData?.sort((a, b) => compareDates(new Date(b?.createdAt || ''), new Date(a?.createdAt || '')));
+    }, [columnData, sortMode])
+
 
     return (
         <>
@@ -40,15 +62,25 @@ function TaskColumn({ statusText, statusNum, columnData }: TaskColumnProps) {
                     >
                         <Typography
                             fontWeight='bold'
-                            color={generateRandomPastelColor()}>
+                            color={pastelColor}>
                             {statusText}
                         </Typography>
-                        <IconButton sx={{ marginRight: -1 }} onClick={() => onClickAddTask()}>
-                            <AddCircleOutlinedIcon />
-                        </IconButton>
+                        <Stack direction='row'>
+                            <Tooltip title='Sort by Date Created'>
+                                <IconButton sx={{ marginRight: -1 }} onClick={() => reverseSortMode()}>
+                                    <SortIcon />
+                                </IconButton>
+                            </Tooltip>
+                            <IconButton sx={{ marginRight: -1 }} onClick={() => onClickAddTask()}>
+                                <AddCircleOutlinedIcon />
+                            </IconButton>
+                        </Stack>
                     </Box>
-                    {columnData?.map(task => (
-                        <TaskCard task={task} onClick={onClickTask} />
+                    {sortedColumnData?.map(task => (
+                        <TaskCard
+                            onClick={editTask}
+                            task={task}
+                        />
                     ))}
                 </Stack>
             </Grid>

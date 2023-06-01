@@ -1,8 +1,11 @@
-import { Box, Card, Divider, Typography } from '@mui/material'
+import { Card, Divider, Stack, Typography } from '@mui/material'
 import { Task } from '../shared/types'
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import EditIcon from '@mui/icons-material/Edit';
+import CardButton from './CardButton';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { putTask } from '../api/task';
 
 interface TaskCardProps {
     task: Task
@@ -10,6 +13,37 @@ interface TaskCardProps {
 }
 
 function TaskCard({ task, onClick }: TaskCardProps) {
+
+    // Hooks
+    const queryClient = useQueryClient()
+
+    // Mutations
+    const updateTask = useMutation({
+        mutationFn: (updatedTask: Task) => putTask(updatedTask, task.id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tasks'] })
+        },
+    })
+
+    // Handlers
+    const onClickMoveCardLeft = (task: Task) => {
+        const updatedTask = {
+            task: task.task,
+            status: task.status - 1,
+            description: task.description
+        }
+        updateTask.mutate(updatedTask)
+    }
+    const onClickMoveCardRight = (task: Task) => {
+        const updatedTask = {
+            description: task.description,
+            status: task.status + 1,
+            task: task.task
+        }
+        updateTask.mutate(updatedTask)
+    }
+
+
     return (
         <Card
             key={task.id}
@@ -24,7 +58,6 @@ function TaskCard({ task, onClick }: TaskCardProps) {
             }}>
             <Typography
                 key={task.id}
-                pb={1}
                 fontWeight='bold'
                 variant='overline'
                 lineHeight={2}
@@ -53,49 +86,19 @@ function TaskCard({ task, onClick }: TaskCardProps) {
                     opacity: 1,
                 },
             }}>
-                <Box
-                    height='100%'
-                    flexGrow={1}
-                    alignItems='center'
-                    justifyContent='center'
-                    display='flex'
-                    sx={{
-                        opacity: 0.5,
-                        ':hover': {
-                            opacity: 1,
-                        },
-                    }}>
-                    <KeyboardArrowLeftIcon fontSize='large' />
-                </Box>
-                <Box
-                    onClick={() => onClick(task)}
-                    height='100%'
-                    flexGrow={1}
-                    alignItems='center'
-                    justifyContent='center'
-                    display='flex'
-                    sx={{
-                        opacity: 0.5,
-                        ':hover': {
-                            opacity: 1,
-                        },
-                    }}>
+                {task?.status !== 1 ? (
+                    <CardButton onClick={() => onClickMoveCardLeft(task)}>
+                        <KeyboardArrowLeftIcon fontSize='large' />
+                    </CardButton>
+                ) : null}
+                <CardButton onClick={() => onClick(task)}>
                     <EditIcon fontSize='large' />
-                </Box>
-                <Box
-                    height='100%'
-                    flexGrow={1}
-                    alignItems='center'
-                    justifyContent='center'
-                    display='flex'
-                    sx={{
-                        opacity: 0.5,
-                        ':hover': {
-                            opacity: 1,
-                        },
-                    }}>
-                    <KeyboardArrowRightIcon fontSize='large' />
-                </Box>
+                </CardButton>
+                {task?.status !== 4 ? (
+                    <CardButton onClick={() => onClickMoveCardRight(task)}>
+                        <KeyboardArrowRightIcon fontSize='large' />
+                    </CardButton>
+                ) : null}
             </Card>
         </Card>
     )

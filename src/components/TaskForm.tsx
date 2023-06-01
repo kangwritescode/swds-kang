@@ -33,27 +33,32 @@ interface TaskFormProps {
 
 const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
 
+    // Hooks
+    const theme = useTheme();
     const queryClient = useQueryClient()
-
-    const { handleSubmit, register, formState: { errors }, control: formControl } = useForm({
+    const {
+        handleSubmit,
+        register,
+        formState: { errors },
+        control: formControl
+    } = useForm({
         resolver: zodResolver(schema),
         defaultValues: initialValues
     });
 
+    // Mutations
     const createTask = useMutation({
         mutationFn: postTask,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tasks'] })
         },
     })
-
     const updateTask = useMutation({
         mutationFn: (task: Task) => putTask(task, initialValues?.id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tasks'] })
         },
     })
-
     const removeTask = useMutation({
         mutationFn: deleteTask,
         onSuccess: () => {
@@ -61,6 +66,7 @@ const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
         },
     })
 
+    // Functions
     const onSubmit = (task: Task) => {
         if (type === 'edit') {
             updateTask.mutate(task);
@@ -69,13 +75,10 @@ const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
         }
         onClose();
     };
-
     const onDelete = () => {
         removeTask.mutate(initialValues?.id);
         onClose();
     }
-
-    const theme = useTheme();
 
     return (
         <Box sx={{
@@ -156,14 +159,16 @@ const TaskForm = ({ onClose, initialValues, type }: TaskFormProps) => {
                     size='large'>
                     {type === 'create' ? 'Create Task' : 'Edit Task'}
                 </Button>
-                <Button
-                    onClick={onDelete}
-                    variant="outlined"
-                    color="error"
-                    size='large'
-                    sx={{ mt: 2 }}>
-                    Delete Task
-                </Button>
+                {type === 'edit' && (
+                    <Button
+                        onClick={onDelete}
+                        variant="outlined"
+                        color="error"
+                        size='large'
+                        sx={{ mt: 2 }}>
+                        Delete Task
+                    </Button>
+                )}
             </Box>
         </Box>
     );

@@ -2,7 +2,7 @@ export interface Task {
     createdAt?: string;
     description?: string;
     id?: number;
-    status?: number;
+    status: number;
     task?: string;
     updatedAt?: string;
 }
